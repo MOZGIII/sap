@@ -1,0 +1,4 @@
+[licenses]
+allow = ["GPL-2.0"]
+copyleft = "warn"
+allow-osi-fsf-free = "both"
