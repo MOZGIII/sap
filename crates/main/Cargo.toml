@@ -5,3 +5,7 @@ edition = "2021"
 license = "GPL-2.0-only"
 
 [dependencies]
+color-eyre = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
