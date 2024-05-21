@@ -36,7 +36,7 @@ pub enum LoadError {
 
     /// The max file size exceeded for a given file.
     #[error("max file size exceeded for file {0:?} of size {1}")]
-    MaxFileSizeExceeded(PathBuf, usize),
+    MaxFileSizeExceeded(PathBuf, FileSize),
 
     /// The route was a duplicate.
     #[error("adding file {0:?} resulted in the route duplucate {1:?}")]
@@ -125,16 +125,19 @@ impl Loader {
                 let route = route_from_file_path::convert(route_path)
                     .map_err(|err| LoadError::RouteConversion(route_path.to_path_buf(), err))?;
 
-                tracing::info!(message = "Adding route", %route);
+                tracing::debug!(message = "Loading body from the route", %route, ?dir_entry_path);
 
                 let body = match tokio::fs::read(&dir_entry_path).await {
                     Ok(data) => data,
                     Err(err) => return Err(LoadError::ReadingBody(dir_entry_path, err)),
                 };
 
-                if body.len() > self.max_file_size.try_into().unwrap() {
-                    return Err(LoadError::MaxFileSizeExceeded(dir_entry_path, body.len()));
+                let file_size: FileSize = body.len().try_into().unwrap();
+                if file_size > self.max_file_size {
+                    return Err(LoadError::MaxFileSizeExceeded(dir_entry_path, file_size));
                 }
+
+                tracing::info!(message = "Adding route", %route, %file_size);
 
                 match server.routes.entry(route) {
                     std::collections::hash_map::Entry::Occupied(entry) => {
