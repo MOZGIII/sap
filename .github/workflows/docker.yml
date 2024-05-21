@@ -50,6 +50,26 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
 
+      - name: Docker meta for main-onbuild
+        id: meta-main-onbuild
+        uses: docker/metadata-action@v5
+        with:
+          bake-target: docker-metadata-action-main-onbuild
+          images: |
+            ghcr.io/${{ github.repository }}
+          labels: |
+            org.opencontainers.image.title=${{ github.repository }}-main-onbuild
+          flavor: |
+            suffix=-onbuild
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
       - name: Login to GitHub Container Registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
@@ -64,6 +84,7 @@ jobs:
           files: |
             ./docker-bake.hcl
             ${{ steps.meta-main.outputs.bake-file }}
+            ${{ steps.meta-main-onbuild.outputs.bake-file }}
           push: ${{ github.event_name != 'pull_request' }}
           set: |
             *.cache-from=type=gha

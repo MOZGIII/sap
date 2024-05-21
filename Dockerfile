@@ -44,3 +44,7 @@ FROM --platform=${TARGETPLATFORM} runtime AS main
 COPY --from=build /artifacts/main /usr/local/bin
 RUN ldd /usr/local/bin/main
 CMD ["main"]
+
+FROM --platform=${TARGETPLATFORM} main AS main-onbuild
+ENV ROOT_DIR /app
+ONBUILD COPY . /app
