@@ -8,6 +8,7 @@ license = "GPL-2.0-only"
 mem-server = { path = "../mem-server" }
 
 http = { workspace = true }
+mime_guess = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["fs"] }
 tracing = { workspace = true }
