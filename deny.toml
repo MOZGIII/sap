@@ -2,3 +2,7 @@
 allow = ["GPL-2.0"]
 copyleft = "warn"
 allow-osi-fsf-free = "both"
+
+[[licenses.exceptions]]
+name = "unicode-ident"
+allow = ["Unicode-DFS-2016"]
