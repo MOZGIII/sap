@@ -6,6 +6,7 @@ license = "GPL-2.0-only"
 
 [dependencies]
 mem-fs-server = { path = "../mem-fs-server" }
+spa-loader = { path = "../spa-loader" }
 
 color-eyre = { workspace = true }
 envfury = { workspace = true }

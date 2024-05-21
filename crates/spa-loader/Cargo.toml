@@ -1,0 +1,13 @@
+[package]
+name = "spa-loader"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-2.0-only"
+
+[dependencies]
+mem-fs-server = { path = "../mem-fs-server" }
+
+http = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["fs"] }
+tracing = { workspace = true }

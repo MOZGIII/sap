@@ -11,10 +11,22 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let addr: std::net::SocketAddr = envfury::or_parse("ADDR", "0.0.0.0:8080")?;
 
-    tracing::info!(message = "About to start the server", %addr);
+    let root_dir: std::path::PathBuf = envfury::must("ROOT_DIR")?;
 
-    let service = mem_fs_server::MemFsServer::default();
+    let max_file_size: spa_loader::FileSize =
+        envfury::or("MAX_FILE_SIZE", spa_loader::FileSize::MAX)?;
+
+    let loader = spa_loader::Loader {
+        max_file_size,
+        root_dir,
+    };
+
+    tracing::info!(message = "Loading the files into memory", ?loader);
+
+    let service = loader.load().await?;
     let service = MemFsServerService(Arc::new(service));
+
+    tracing::info!(message = "About to start the server", %addr);
 
     xitca_web::HttpServer::serve(service)
         .bind(addr)?
