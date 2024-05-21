@@ -1,9 +1,20 @@
 //! An file server that loads files in-memory and then serves them without touching the disk.
 
+use std::collections::HashMap;
+
 use bytes::Bytes;
 
 /// A memory-fs server.
-pub struct MemFsServer {}
+#[derive(Debug, Default)]
+pub struct MemFsServer {
+    /// The routes to serve.
+    ///
+    /// Only exact matches are respected.
+    pub routes: HashMap<String, http::Response<Bytes>>,
+
+    /// The response to present when the routes do not have a matching path.
+    pub not_found: Option<http::Response<Bytes>>,
+}
 
 impl MemFsServer {
     /// Handle an incoming HTTP request and provide an HTTP response.
@@ -15,7 +26,7 @@ impl MemFsServer {
         ResponseBody: From<Bytes>,
     {
         if req.method() != http::Method::GET {
-            let mut res = http::Response::new(Bytes::from_static(b"").into());
+            let mut res = http::Response::new(empty_bytes().into());
             *res.status_mut() = http::StatusCode::METHOD_NOT_ALLOWED;
             return res;
         }
@@ -25,16 +36,28 @@ impl MemFsServer {
             return http::Response::from_parts(parts, body.into());
         }
 
-        let mut res = http::Response::new(Bytes::from_static(b"not found").into());
+        let mut res = http::Response::new(empty_bytes().into());
         *res.status_mut() = http::StatusCode::NOT_FOUND;
         res
     }
 
     /// Handle an incoming request for a given path and provide the response.
     pub fn handle_path(&self, path: &str) -> Option<http::Response<Bytes>> {
-        if path != "/test" {
-            return None;
+        for (route_path, route_res) in &self.routes {
+            if route_path == path {
+                return Some(route_res.clone());
+            }
         }
-        Some(http::Response::new(Bytes::from_static(b"test")))
+
+        if let Some(not_found_res) = &self.not_found {
+            return Some(not_found_res.clone());
+        }
+
+        None
     }
+}
+
+/// Returns empty bytes.
+fn empty_bytes() -> Bytes {
+    Bytes::from_static(b"")
 }

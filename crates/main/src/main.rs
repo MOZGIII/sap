@@ -13,7 +13,7 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     tracing::info!(message = "About to start the server", %addr);
 
-    let service = mem_fs_server::MemFsServer {};
+    let service = mem_fs_server::MemFsServer::default();
     let service = MemFsServerService(Arc::new(service));
 
     xitca_web::HttpServer::serve(service)
