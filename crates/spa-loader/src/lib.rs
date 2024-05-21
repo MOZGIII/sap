@@ -168,6 +168,7 @@ impl Loader {
         // Use the root response for not found if requested.
         if self.root_as_not_found {
             if let Some(root_response) = server.routes.get("/") {
+                tracing::info!(message = "Using root as not found route");
                 server.not_found = Some(root_response.clone());
             }
         }
