@@ -16,6 +16,8 @@ async fn main() -> color_eyre::eyre::Result<()> {
     let max_file_size: spa_loader::FileSize =
         envfury::or("MAX_FILE_SIZE", spa_loader::FileSize::MAX)?;
 
+    let mode: Mode = envfury::or_else("MODE", Mode::default)?;
+
     let loader = spa_loader::Loader {
         max_file_size,
         root_dir,
@@ -24,6 +26,11 @@ async fn main() -> color_eyre::eyre::Result<()> {
     tracing::info!(message = "Loading the files into memory", ?loader);
 
     let service = loader.load().await?;
+
+    if mode == Mode::Check {
+        return Ok(());
+    }
+
     let service = MemFsServerService(Arc::new(service));
 
     tracing::info!(message = "About to start the server", %addr);
@@ -63,4 +70,15 @@ impl xitca_web::service::Service<WebRequest> for MemFsServerService {
     async fn call(&self, req: WebRequest) -> Result<Self::Response, Self::Error> {
         Ok(self.0.handle_request(req))
     }
+}
+
+/// The operation mode.
+#[derive(Debug, PartialEq, Eq, Default, strum::EnumString)]
+#[strum(serialize_all = "snake_case")]
+enum Mode {
+    /// Run the server.
+    #[default]
+    Run,
+    /// Load the SPA and exit.
+    Check,
 }
