@@ -10,5 +10,4 @@ FROM ghcr.io/mozgiii/sap:master
 COPY . /app
 
 ENV ROOT_DIR=/app
-ENV ADDR=[::]:8080
 ```
