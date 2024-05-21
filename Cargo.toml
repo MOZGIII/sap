@@ -11,3 +11,9 @@ xitca-web = "0.4"
 
 [profile.dev.package.backtrace]
 opt-level = 3
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
+panic = "abort"
