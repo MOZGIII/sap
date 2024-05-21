@@ -1,5 +1,6 @@
 //! An opinionated SPA (Single Page App) loader.
 
+pub mod content_type;
 pub mod route_from_file_path;
 
 use std::path::PathBuf;
@@ -149,9 +150,16 @@ impl Loader {
                     return Err(LoadError::MaxFileSizeExceeded(dir_entry_path, file_size));
                 }
 
-                tracing::info!(message = "Adding route", %route, %file_size);
+                let maybe_content_type = content_type::detect(route);
 
-                let res = http::Response::new(body.into());
+                tracing::info!(message = "Adding route", %route, %file_size, ?maybe_content_type);
+
+                let mut res = http::Response::new(body.into());
+
+                if let Some(content_type) = maybe_content_type {
+                    res.headers_mut()
+                        .insert(http::header::CONTENT_TYPE, content_type);
+                }
 
                 route_entry.insert(res);
             }
