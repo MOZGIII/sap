@@ -1,12 +1,13 @@
-//! An file server that loads files in-memory and then serves them without touching the disk.
+//! An server that preloads the responses for the given routes in-memory and then serves them right
+//! from the memory without touching the disk/fs.
 
 use std::collections::HashMap;
 
 use bytes::Bytes;
 
-/// A memory-fs server.
+/// A memory server.
 #[derive(Debug, Default)]
-pub struct MemFsServer {
+pub struct MemServer {
     /// The routes to serve.
     ///
     /// Only exact matches are respected.
@@ -16,7 +17,7 @@ pub struct MemFsServer {
     pub not_found: Option<http::Response<Bytes>>,
 }
 
-impl MemFsServer {
+impl MemServer {
     /// Handle an incoming HTTP request and provide an HTTP response.
     pub fn handle_request<RequestBody, ResponseBody>(
         &self,

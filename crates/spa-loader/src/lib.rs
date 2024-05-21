@@ -61,8 +61,8 @@ pub struct Loader {
 
 impl Loader {
     /// Load the SPA code from the filesystem and prepare it to be served.
-    pub async fn load(&self) -> Result<mem_fs_server::MemFsServer, LoadError> {
-        let mut server = mem_fs_server::MemFsServer::default();
+    pub async fn load(&self) -> Result<mem_server::MemServer, LoadError> {
+        let mut server = mem_server::MemServer::default();
         self.populate_from(vec![self.root_dir.to_path_buf()], &mut server)
             .await?;
         Ok(server)
@@ -72,7 +72,7 @@ impl Loader {
     pub async fn populate_from(
         &self,
         mut dirs: Vec<PathBuf>,
-        server: &mut mem_fs_server::MemFsServer,
+        server: &mut mem_server::MemServer,
     ) -> Result<(), LoadError> {
         loop {
             let Some(dir) = dirs.pop() else {

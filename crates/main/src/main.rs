@@ -31,7 +31,7 @@ async fn main() -> color_eyre::eyre::Result<()> {
         return Ok(());
     }
 
-    let service = MemFsServerService(Arc::new(service));
+    let service = MemServerService(Arc::new(service));
 
     tracing::info!(message = "About to start the server", %addr);
 
@@ -43,26 +43,26 @@ async fn main() -> color_eyre::eyre::Result<()> {
     Ok(())
 }
 
-/// The [`xitca_web`] integration for the [`mem_fs_server::MemFsServer`].
-struct MemFsServerService(pub Arc<mem_fs_server::MemFsServer>);
+/// The [`xitca_web`] integration for the [`mem_server::MemServer`].
+struct MemServerService(pub Arc<mem_server::MemServer>);
 
-impl xitca_web::service::Service for MemFsServerService {
-    type Response = MemFsServerService;
+impl xitca_web::service::Service for MemServerService {
+    type Response = Self;
     type Error = std::convert::Infallible;
 
     async fn call(&self, _req: ()) -> Result<Self::Response, Self::Error> {
-        Ok(MemFsServerService(Arc::clone(&self.0)))
+        Ok(Self(Arc::clone(&self.0)))
     }
 }
 
-impl xitca_web::service::ready::ReadyService for MemFsServerService {
+impl xitca_web::service::ready::ReadyService for MemServerService {
     type Ready = ();
 
     #[inline]
     async fn ready(&self) -> Self::Ready {}
 }
 
-impl xitca_web::service::Service<WebRequest> for MemFsServerService {
+impl xitca_web::service::Service<WebRequest> for MemServerService {
     type Response = WebResponse;
     type Error = std::convert::Infallible;
 

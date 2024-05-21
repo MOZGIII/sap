@@ -185,7 +185,7 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "envfury",
- "mem-fs-server",
+ "mem-server",
  "spa-loader",
  "strum",
  "tokio",
@@ -195,7 +195,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mem-fs-server"
+name = "mem-server"
 version = "0.1.0"
 dependencies = [
  "bytes",
@@ -350,7 +350,7 @@ name = "spa-loader"
 version = "0.1.0"
 dependencies = [
  "http",
- "mem-fs-server",
+ "mem-server",
  "thiserror",
  "tokio",
  "tracing",

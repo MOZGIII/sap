@@ -5,7 +5,7 @@ edition = "2021"
 license = "GPL-2.0-only"
 
 [dependencies]
-mem-fs-server = { path = "../mem-fs-server" }
+mem-server = { path = "../mem-server" }
 
 http = { workspace = true }
 thiserror = { workspace = true }
