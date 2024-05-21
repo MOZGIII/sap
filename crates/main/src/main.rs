@@ -18,9 +18,12 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let mode: Mode = envfury::or_else("MODE", Mode::default)?;
 
+    let root_as_not_found: bool = envfury::or("ROOT_AS_NOT_FOUND", true)?;
+
     let loader = spa_loader::Loader {
         max_file_size,
         root_dir,
+        root_as_not_found,
     };
 
     tracing::info!(message = "Loading the files into memory", ?loader);

@@ -57,6 +57,11 @@ pub struct Loader {
     ///
     /// Will be used as a prefix to strip from the file paths before converting them to routes.
     pub root_dir: PathBuf,
+
+    /// Whether to use the root page as not found.
+    ///
+    /// Useful for the apps with dynamic routing.
+    pub root_as_not_found: bool,
 }
 
 impl Loader {
@@ -145,9 +150,11 @@ impl Loader {
             }
         }
 
-        // Use the root response for not found.
-        if let Some(root_response) = server.routes.get("/") {
-            server.not_found = Some(root_response.clone());
+        // Use the root response for not found if requested.
+        if self.root_as_not_found {
+            if let Some(root_response) = server.routes.get("/") {
+                server.not_found = Some(root_response.clone());
+            }
         }
 
         Ok(())
