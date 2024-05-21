@@ -73,7 +73,7 @@ impl Loader {
         loop {
             let Some(dir) = dirs.pop() else {
                 tracing::debug!(message = "All dirs visited");
-                return Ok(());
+                break;
             };
 
             tracing::debug!(message = "Visiting dir", ?dir);
@@ -132,5 +132,12 @@ impl Loader {
                     .insert(route, http::Response::new(body.into()));
             }
         }
+
+        // Use the root response for not found.
+        if let Some(root_response) = server.routes.get("/") {
+            server.not_found = Some(root_response.clone());
+        }
+
+        Ok(())
     }
 }
