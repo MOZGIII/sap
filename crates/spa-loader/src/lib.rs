@@ -125,6 +125,18 @@ impl Loader {
                 let route = route_from_file_path::convert(route_path)
                     .map_err(|err| LoadError::RouteConversion(route_path.to_path_buf(), err))?;
 
+                let route_entry = match server.routes.entry(route) {
+                    std::collections::hash_map::Entry::Occupied(entry) => {
+                        return Err(LoadError::DuplicateRoute(
+                            dir_entry_path,
+                            entry.key().clone(),
+                        ));
+                    }
+                    std::collections::hash_map::Entry::Vacant(entry) => entry,
+                };
+
+                let route = route_entry.key();
+
                 tracing::debug!(message = "Loading body from the route", %route, ?dir_entry_path);
 
                 let body = match tokio::fs::read(&dir_entry_path).await {
@@ -139,17 +151,9 @@ impl Loader {
 
                 tracing::info!(message = "Adding route", %route, %file_size);
 
-                match server.routes.entry(route) {
-                    std::collections::hash_map::Entry::Occupied(entry) => {
-                        return Err(LoadError::DuplicateRoute(
-                            dir_entry_path,
-                            entry.key().clone(),
-                        ));
-                    }
-                    std::collections::hash_map::Entry::Vacant(entry) => {
-                        entry.insert(http::Response::new(body.into()));
-                    }
-                }
+                let res = http::Response::new(body.into());
+
+                route_entry.insert(res);
             }
         }
 
