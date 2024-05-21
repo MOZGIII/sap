@@ -37,6 +37,10 @@ pub enum LoadError {
     /// The max file size exceeded for a given file.
     #[error("max file size exceeded for file {0:?}")]
     MaxFileSizeExceeded(PathBuf),
+
+    /// The route was a duplicate.
+    #[error("adding file {0:?} resulted in the route duplucate {1:?}")]
+    DuplicateRoute(PathBuf, String),
 }
 
 /// An opinionated SPA code loader.
@@ -127,9 +131,17 @@ impl Loader {
                     return Err(LoadError::MaxFileSizeExceeded(dir_entry_path));
                 }
 
-                server
-                    .routes
-                    .insert(route, http::Response::new(body.into()));
+                match server.routes.entry(route) {
+                    std::collections::hash_map::Entry::Occupied(entry) => {
+                        return Err(LoadError::DuplicateRoute(
+                            dir_entry_path,
+                            entry.key().clone(),
+                        ));
+                    }
+                    std::collections::hash_map::Entry::Vacant(entry) => {
+                        entry.insert(http::Response::new(body.into()));
+                    }
+                }
             }
         }
 
