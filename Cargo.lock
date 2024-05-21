@@ -179,10 +179,19 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "envfury",
+ "mem-fs-server",
  "tokio",
  "tracing",
  "tracing-subscriber",
  "xitca-web",
+]
+
+[[package]]
+name = "mem-fs-server"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "http",
 ]
 
 [[package]]

@@ -5,6 +5,8 @@ edition = "2021"
 license = "GPL-2.0-only"
 
 [dependencies]
+mem-fs-server = { path = "../mem-fs-server" }
+
 color-eyre = { workspace = true }
 envfury = { workspace = true }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
