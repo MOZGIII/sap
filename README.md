@@ -1,6 +1,7 @@
 # sap
 
-Opinionated static file server for SPAs.
+Opinionated HTTP server for hosting static files of Single Page Apps from memory
+with blazing fast speeds.
 
 ## Goals and non-goals
 
