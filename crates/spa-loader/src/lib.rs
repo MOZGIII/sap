@@ -35,8 +35,8 @@ pub enum LoadError {
     ReadingBody(PathBuf, std::io::Error),
 
     /// The max file size exceeded for a given file.
-    #[error("max file size exceeded for file {0:?}")]
-    MaxFileSizeExceeded(PathBuf),
+    #[error("max file size exceeded for file {0:?} of size {1}")]
+    MaxFileSizeExceeded(PathBuf, usize),
 
     /// The route was a duplicate.
     #[error("adding file {0:?} resulted in the route duplucate {1:?}")]
@@ -133,7 +133,7 @@ impl Loader {
                 };
 
                 if body.len() > self.max_file_size.try_into().unwrap() {
-                    return Err(LoadError::MaxFileSizeExceeded(dir_entry_path));
+                    return Err(LoadError::MaxFileSizeExceeded(dir_entry_path, body.len()));
                 }
 
                 match server.routes.entry(route) {
