@@ -69,8 +69,13 @@ impl Loader {
     /// Load the SPA code from the filesystem and prepare it to be served.
     pub async fn load(&self) -> Result<mem_server::MemServer, LoadError> {
         let mut server = mem_server::MemServer::default();
-        self.populate_from(vec![self.root_dir.to_path_buf()], &mut server)
-            .await?;
+        let mut content_type_detector = content_type::Detector::default();
+        self.populate_from(
+            vec![self.root_dir.to_path_buf()],
+            &mut server,
+            &mut content_type_detector,
+        )
+        .await?;
         Ok(server)
     }
 
@@ -79,6 +84,7 @@ impl Loader {
         &self,
         mut dirs: Vec<PathBuf>,
         server: &mut mem_server::MemServer,
+        content_type_detector: &mut content_type::Detector,
     ) -> Result<(), LoadError> {
         loop {
             let Some(dir) = dirs.pop() else {
@@ -150,7 +156,7 @@ impl Loader {
                     return Err(LoadError::MaxFileSizeExceeded(dir_entry_path, file_size));
                 }
 
-                let maybe_content_type = content_type::detect(route);
+                let maybe_content_type = content_type_detector.detect(route);
 
                 tracing::info!(message = "Adding route", %route, %file_size, ?maybe_content_type);
 

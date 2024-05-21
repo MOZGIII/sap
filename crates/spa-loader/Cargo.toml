@@ -7,8 +7,9 @@ license = "GPL-2.0-only"
 [dependencies]
 mem-server = { path = "../mem-server" }
 
+bytes = { workspace = true }
 http = { workspace = true }
-mime_guess = { workspace = true }
+mr-mime = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["fs"] }
 tracing = { workspace = true }
