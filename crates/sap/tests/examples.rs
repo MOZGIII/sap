@@ -1,6 +1,6 @@
 use std::path::Path;
 
-const EXECUTABLE_PATH: &str = env!("CARGO_BIN_EXE_main");
+const EXECUTABLE_PATH: &str = env!("CARGO_BIN_EXE_sap");
 
 fn prepare_command(example_dir: impl AsRef<Path>) -> std::process::Command {
     let mut command = std::process::Command::new(EXECUTABLE_PATH);

@@ -37,14 +37,14 @@ RUN --mount=type=cache,target=target,id=${TARGETPLATFORM} \
   mkdir -p /artifacts \
   && cd target/release \
   && cp -t /artifacts \
-  main \
+  sap \
   && ls -la /artifacts
 
-FROM --platform=${TARGETPLATFORM} runtime AS main
-COPY --from=build /artifacts/main /usr/local/bin
-RUN ldd /usr/local/bin/main
-CMD ["main"]
+FROM --platform=${TARGETPLATFORM} runtime AS sap
+COPY --from=build /artifacts/sap /usr/local/bin
+RUN ldd /usr/local/bin/sap
+CMD ["sap"]
 
-FROM --platform=${TARGETPLATFORM} main AS main-onbuild
+FROM --platform=${TARGETPLATFORM} sap AS sap-onbuild
 ENV ROOT_DIR /app
 ONBUILD COPY . /app
