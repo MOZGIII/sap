@@ -63,7 +63,6 @@ jobs:
         with:
           platformCacheKey: ${{ matrix.plan.platform.cacheKey }}
           modeCacheKey: ${{ matrix.plan.mode.cargoCacheKey }}
-          isOnSelfHostedRunner: ${{ matrix.plan.platform.isOnSelfHostedRunner }}
           buildEnvScript: ${{ matrix.plan.platform.buildEnvScript }}
         timeout-minutes: 10
 
