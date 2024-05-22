@@ -14,4 +14,4 @@ strum = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-xitca-web = { workspace = true }
+xitca-web = { workspace = true, features = ["http1"] }
