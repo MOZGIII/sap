@@ -1,4 +1,8 @@
-export type RunnerOS = "ubuntu-22.04" | "windows-latest" | "macos-latest";
+export type RunnerOS =
+  | "ubuntu-22.04"
+  | "windows-latest"
+  | "macos-14"
+  | "macos-14-large";
 
 export type Platform = {
   name: string;
@@ -39,13 +43,23 @@ export const all = {
     artifactMarker: null,
     isBroken: true,
   },
-  macos: {
-    name: "macOS (aarch64)",
-    os: "macos-latest",
+  macos14amd64: {
+    name: "macOS 14 (amd64)",
+    os: "macos-14-large",
     buildEnvScript: buildEnvScriptPath("macos.sh"),
     essential: false,
     env: {},
-    cacheKey: "macos-aarch64",
+    cacheKey: "macos-14-amd64",
+    artifactMarker: null,
+    isBroken: false,
+  },
+  macos14aarch64: {
+    name: "macOS 14 (aarch64)",
+    os: "macos-14",
+    buildEnvScript: buildEnvScriptPath("macos.sh"),
+    essential: false,
+    env: {},
+    cacheKey: "macos-14-aarch64",
     artifactMarker: null,
     isBroken: false,
   },
