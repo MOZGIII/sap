@@ -23,6 +23,9 @@ fi
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
+pwd
+set -x
+
 BINARIES=()
 
 for BINARY in $(build-utils/list-bin-targets); do
