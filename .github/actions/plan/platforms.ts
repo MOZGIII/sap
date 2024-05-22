@@ -51,7 +51,7 @@ export const all = {
     env: {},
     cacheKey: "macos-14-amd64",
     artifactMarker: null,
-    isBroken: false,
+    isBroken: true,
   },
   macos14aarch64: {
     name: "macOS 14 (aarch64)",
