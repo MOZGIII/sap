@@ -777,9 +777,9 @@ checksum = "bec47e5bfd1bff0eeaf6d8b485cc1074891a197ab4225d504cb7a1ab88b02bf0"
 
 [[package]]
 name = "xitca-http"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e71e5815523add75508840f977328831f84b127f76e4d88d0cddb2781061c12"
+checksum = "6d5fd258cd6cd9d677cb94273da69fafee7460bbbd001c92a73c167149856e46"
 dependencies = [
  "futures-core",
  "http",
@@ -798,9 +798,9 @@ dependencies = [
 
 [[package]]
 name = "xitca-io"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15e3340548aec525e517557432502238ed86ae69b6fc1eed851693773516b399"
+checksum = "da690dc253320dae7ffbb70e7fa9c5e52ef79476dd41f5d52b9114c8b58d7126"
 dependencies = [
  "bytes",
  "tokio",
@@ -818,9 +818,9 @@ dependencies = [
 
 [[package]]
 name = "xitca-server"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f48656d81909cb34fcf01288cdaf2bd77848d0f0dcbdc0c429b6ed376f78f4d5"
+checksum = "4e144aca50286d05f7450045d6b6eebe2157ed11bc5821d926fc276280113c94"
 dependencies = [
  "socket2 0.5.7",
  "tokio",
@@ -848,9 +848,9 @@ dependencies = [
 
 [[package]]
 name = "xitca-web"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1413cc620f508e9df4859196b807b820a319cba3ae2c4a7dfe1a254e3db8a841"
+checksum = "bd23a9146a753f4f9e10bf4cc99b53d040a5459c32f043965d75f0c2b4a78af6"
 dependencies = [
  "futures-core",
  "pin-project-lite",
