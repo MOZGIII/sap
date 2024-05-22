@@ -24,13 +24,13 @@ Non-goals:
 Using the `onbuild` image:
 
 ```dockerfile
-FROM ghcr.io/mozgiii/sap:master-onbuild
+FROM ghcr.io/mozgiii/sap:latest-onbuild
 ```
 
 or using the regular image and copying the files manually:
 
 ```dockerfile
-FROM ghcr.io/mozgiii/sap:master
+FROM ghcr.io/mozgiii/sap:latest
 
 COPY . /app
 
