@@ -1,17 +1,12 @@
-export const selfHostedRunners = {
-  macosAarch64: ["self-hosted", "macOS", "aarch64"],
-} as const;
-
 export type RunnerOS =
   | "ubuntu-22.04"
   | "windows-latest"
-  | "macos-latest"
-  | (typeof selfHostedRunners)[keyof typeof selfHostedRunners];
+  | "macos-14"
+  | "macos-14-large";
 
 export type Platform = {
   name: string;
   os: RunnerOS;
-  isOnSelfHostedRunner: boolean;
   buildEnvScript: string;
   essential: boolean;
   env: Record<string, string>;
@@ -32,7 +27,6 @@ export const all = {
     name: "Ubuntu 22.04",
     os: "ubuntu-22.04",
     buildEnvScript: buildEnvScriptPath("ubuntu.sh"),
-    isOnSelfHostedRunner: false,
     essential: true,
     env: {},
     cacheKey: "ubuntu2204-amd64",
@@ -43,32 +37,29 @@ export const all = {
     name: "Windows",
     os: "windows-latest",
     buildEnvScript: buildEnvScriptPath("windows.sh"),
-    isOnSelfHostedRunner: false,
     essential: false,
     env: {},
     cacheKey: "windows-amd64",
     artifactMarker: null,
     isBroken: true,
   },
-  macos: {
-    name: "macOS (amd64)",
-    os: "macos-latest",
+  macos14amd64: {
+    name: "macOS 14 (amd64)",
+    os: "macos-14-large",
     buildEnvScript: buildEnvScriptPath("macos.sh"),
-    isOnSelfHostedRunner: false,
     essential: false,
     env: {},
-    cacheKey: "macos-amd64",
+    cacheKey: "macos-14-amd64",
     artifactMarker: null,
-    isBroken: false,
+    isBroken: true,
   },
-  macos_aarch64: {
-    name: "macOS (aarch64)",
-    os: selfHostedRunners.macosAarch64,
+  macos14aarch64: {
+    name: "macOS 14 (aarch64)",
+    os: "macos-14",
     buildEnvScript: buildEnvScriptPath("macos.sh"),
-    isOnSelfHostedRunner: true,
     essential: false,
     env: {},
-    cacheKey: "macos-aarch64",
+    cacheKey: "macos-14-aarch64",
     artifactMarker: null,
     isBroken: false,
   },
