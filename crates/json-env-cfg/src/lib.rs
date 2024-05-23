@@ -1,4 +1,4 @@
-//! The configuration specifics.
+//! Env-var-substituted JSON configs.
 
 use std::{collections::HashMap, ffi::OsString};
 

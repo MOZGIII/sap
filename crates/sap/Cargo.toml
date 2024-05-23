@@ -6,7 +6,7 @@ license = "GPL-2.0-only"
 
 [dependencies]
 mem-server = { path = "../mem-server" }
-spa-cfg = { path = "../spa-cfg" }
+spa-cfg-html = { path = "../spa-cfg-html" }
 spa-loader = { path = "../spa-loader" }
 
 color-eyre = { workspace = true }
