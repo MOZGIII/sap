@@ -373,6 +373,7 @@ dependencies = [
  "indoc",
  "serde",
  "serde_json",
+ "thiserror",
 ]
 
 [[package]]
