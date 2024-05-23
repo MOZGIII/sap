@@ -1,12 +1,10 @@
 [package]
-name = "spa-cfg"
+name = "json-env-cfg"
 version = "0.1.0"
 edition = "2021"
 license = "GPL-2.0-only"
 
 [dependencies]
-html-templating = { path = "../html-templating" }
-
 convert_case = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

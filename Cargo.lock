@@ -366,6 +366,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
 
 [[package]]
+name = "json-env-cfg"
+version = "0.1.0"
+dependencies = [
+ "convert_case 0.6.0",
+ "indoc",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "kuchikiki"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -816,7 +826,7 @@ dependencies = [
  "color-eyre",
  "envfury",
  "mem-server",
- "spa-cfg",
+ "spa-cfg-html",
  "spa-loader",
  "strum",
  "tokio",
@@ -964,14 +974,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "spa-cfg"
+name = "spa-cfg-html"
 version = "0.1.0"
 dependencies = [
- "convert_case 0.6.0",
  "html-templating",
- "indoc",
- "serde",
- "serde_json",
+ "json-env-cfg",
 ]
 
 [[package]]
@@ -982,7 +989,7 @@ dependencies = [
  "http",
  "mem-server",
  "mr-mime",
- "spa-cfg",
+ "spa-cfg-html",
  "thiserror",
  "tokio",
  "tracing",

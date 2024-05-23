@@ -45,7 +45,7 @@ pub enum LoadError {
 
     /// The templating for a given file/route has failed.
     #[error("applying the SPA cfg template for file {0:?} (route {1:?}): {2}")]
-    Templating(PathBuf, String, spa_cfg::Error),
+    Templating(PathBuf, String, spa_cfg_html::Error),
 }
 
 /// An opinionated SPA code loader.
@@ -71,8 +71,8 @@ pub struct Loader {
     /// Templating configuration for the root route.
     ///
     /// The current implementation only does tempating for the root route and only
-    /// using the [`spa_cfg`] facilities.
-    pub root_templating: Option<spa_cfg::SpaCfg>,
+    /// using the [`spa_cfg_html`] facilities.
+    pub root_templating: Option<spa_cfg_html::Engine>,
 }
 
 impl Loader {

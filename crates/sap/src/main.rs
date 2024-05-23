@@ -28,9 +28,9 @@ async fn main() -> color_eyre::eyre::Result<()> {
         max_file_size,
         root_dir,
         root_as_not_found,
-        root_templating: (!no_root_templating).then_some(spa_cfg::SpaCfg {
+        root_templating: (!no_root_templating).then_some(spa_cfg_html::Engine {
             env_prefix: std::borrow::Cow::Owned(cfg_env_prefix),
-            template_tag_presence: spa_cfg::TemplateTagPresence::Required,
+            template_tag_presence: spa_cfg_html::TemplateTagPresence::Required,
         }),
     };
 

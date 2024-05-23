@@ -1,6 +1,5 @@
-//! Opinionated way of providing deployment time configuration to the Singe Page Apps.
-
-pub mod config;
+//! Opinionated way of providing deployment time configuration to the Singe Page Apps with
+//! HTML templates.
 
 use std::borrow::Cow;
 
@@ -16,9 +15,9 @@ pub enum TemplateTagPresence {
     SkipIfNotFound,
 }
 
-/// The settings for the SPA configuration system.
+/// The HTML templating engine for the SPA configuration.
 #[derive(Debug)]
-pub struct SpaCfg {
+pub struct Engine {
     /// The prefix for the ENV vars to use.
     pub env_prefix: Cow<'static, str>,
 
@@ -29,20 +28,20 @@ pub struct SpaCfg {
 }
 
 /// The error type.
-pub type Error = html_templating::TemplatingError<config::Error>;
+pub type Error = html_templating::TemplatingError<json_env_cfg::Error>;
 
 /// The content processor for the HTML templating.
-struct ContentProcessor<'a>(&'a SpaCfg);
+struct ContentProcessor<'a>(&'a Engine);
 
 impl html_templating::ContentProcessor for ContentProcessor<'_> {
-    type Error = config::Error;
+    type Error = json_env_cfg::Error;
 
     fn process(&self, input: &str) -> Result<String, Self::Error> {
-        config::Config::templatify_from_env(input, &self.0.env_prefix)
+        json_env_cfg::Config::templatify_from_env(input, &self.0.env_prefix)
     }
 }
 
-impl SpaCfg {
+impl Engine {
     /// Apply the SPA configuration to the given HTML document contents.
     pub fn apply(&self, body: &mut Vec<u8>) -> Result<(), Error> {
         let html_templating_processor = html_templating::Processor {

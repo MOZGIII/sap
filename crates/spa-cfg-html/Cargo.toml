@@ -1,0 +1,9 @@
+[package]
+name = "spa-cfg-html"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-2.0-only"
+
+[dependencies]
+html-templating = { path = "../html-templating" }
+json-env-cfg = { path = "../json-env-cfg" }
