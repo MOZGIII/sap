@@ -1,20 +1,20 @@
 group "default" {
-  targets = ["main", "main-onbuild"]
+  targets = ["sap", "sap-onbuild"]
 }
 
-target "main" {
-  inherits = ["docker-metadata-action-main"]
+target "sap" {
+  inherits = ["docker-metadata-action-sap"]
   dockerfile = "Dockerfile"
-  target = "main"
+  target = "sap"
 }
 
-target "main-onbuild" {
-  inherits = ["docker-metadata-action-main-onbuild"]
+target "sap-onbuild" {
+  inherits = ["docker-metadata-action-sap-onbuild"]
   dockerfile = "Dockerfile"
-  target = "main-onbuild"
+  target = "sap-onbuild"
 }
 
 # Targets to allow injecting customizations from Github Actions.
 
-target "docker-metadata-action-main" {}
-target "docker-metadata-action-main-onbuild" {}
+target "docker-metadata-action-sap" {}
+target "docker-metadata-action-sap-onbuild" {}

@@ -32,15 +32,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker meta for main
-        id: meta-main
+      - name: Docker meta for sap
+        id: meta-sap
         uses: docker/metadata-action@v5
         with:
-          bake-target: docker-metadata-action-main
+          bake-target: docker-metadata-action-sap
           images: |
             ghcr.io/${{ github.repository }}
           labels: |
-            org.opencontainers.image.title=${{ github.repository }}-main
+            org.opencontainers.image.title=${{ github.repository }}-sap
           tags: |
             type=schedule
             type=ref,event=branch
@@ -50,15 +50,15 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
 
-      - name: Docker meta for main-onbuild
-        id: meta-main-onbuild
+      - name: Docker meta for sap-onbuild
+        id: meta-sap-onbuild
         uses: docker/metadata-action@v5
         with:
-          bake-target: docker-metadata-action-main-onbuild
+          bake-target: docker-metadata-action-sap-onbuild
           images: |
             ghcr.io/${{ github.repository }}
           labels: |
-            org.opencontainers.image.title=${{ github.repository }}-main-onbuild
+            org.opencontainers.image.title=${{ github.repository }}-sap-onbuild
           flavor: |
             suffix=-onbuild,onlatest=true
           tags: |
@@ -83,8 +83,8 @@ jobs:
         with:
           files: |
             ./docker-bake.hcl
-            ${{ steps.meta-main.outputs.bake-file }}
-            ${{ steps.meta-main-onbuild.outputs.bake-file }}
+            ${{ steps.meta-sap.outputs.bake-file }}
+            ${{ steps.meta-sap-onbuild.outputs.bake-file }}
           push: ${{ github.event_name != 'pull_request' }}
           set: |
             *.cache-from=type=gha

@@ -211,21 +211,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
-name = "main"
-version = "0.1.0"
-dependencies = [
- "color-eyre",
- "envfury",
- "mem-server",
- "spa-loader",
- "strum",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "xitca-web",
-]
-
-[[package]]
 name = "mem-server"
 version = "0.1.0"
 dependencies = [
@@ -351,6 +336,21 @@ name = "rustversion"
 version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "955d28af4278de8121b7ebeb796b6a45735dc01436d898801014aced2773a3d6"
+
+[[package]]
+name = "sap"
+version = "0.1.0"
+dependencies = [
+ "color-eyre",
+ "envfury",
+ "mem-server",
+ "spa-loader",
+ "strum",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "xitca-web",
+]
 
 [[package]]
 name = "scoped-tls"
