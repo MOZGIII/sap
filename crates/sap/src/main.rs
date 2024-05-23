@@ -2,8 +2,6 @@
 
 use std::sync::Arc;
 
-use xitca_web::http::{WebRequest, WebResponse};
-
 #[tokio::main]
 async fn main() -> color_eyre::eyre::Result<()> {
     tracing_subscriber::fmt::init();
@@ -42,7 +40,7 @@ async fn main() -> color_eyre::eyre::Result<()> {
         return Ok(());
     }
 
-    let service = MemServerService(Arc::new(service));
+    let service = xitca_mem_server::Service(Arc::new(service));
 
     tracing::info!(message = "About to start the server", %addr);
 
@@ -52,35 +50,6 @@ async fn main() -> color_eyre::eyre::Result<()> {
         .await?;
 
     Ok(())
-}
-
-/// The [`xitca_web`] integration for the [`mem_server::MemServer`].
-struct MemServerService(pub Arc<mem_server::MemServer>);
-
-impl xitca_web::service::Service for MemServerService {
-    type Response = Self;
-    type Error = std::convert::Infallible;
-
-    async fn call(&self, _req: ()) -> Result<Self::Response, Self::Error> {
-        Ok(Self(Arc::clone(&self.0)))
-    }
-}
-
-impl xitca_web::service::ready::ReadyService for MemServerService {
-    type Ready = ();
-
-    #[inline]
-    async fn ready(&self) -> Self::Ready {}
-}
-
-impl xitca_web::service::Service<WebRequest> for MemServerService {
-    type Response = WebResponse;
-    type Error = std::convert::Infallible;
-
-    #[inline]
-    async fn call(&self, req: WebRequest) -> Result<Self::Response, Self::Error> {
-        Ok(self.0.handle_request(req))
-    }
 }
 
 /// The operation mode.

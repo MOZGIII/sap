@@ -825,13 +825,13 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "envfury",
- "mem-server",
  "spa-cfg-html",
  "spa-loader",
  "strum",
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "xitca-mem-server",
  "xitca-web",
 ]
 
@@ -1454,6 +1454,14 @@ dependencies = [
  "bytes",
  "tokio",
  "xitca-unsafe-collection",
+]
+
+[[package]]
+name = "xitca-mem-server"
+version = "0.1.0"
+dependencies = [
+ "mem-server",
+ "xitca-web",
 ]
 
 [[package]]
