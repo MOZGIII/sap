@@ -19,6 +19,7 @@ async fn main() -> color_eyre::eyre::Result<()> {
     let root_as_not_found: bool = envfury::or("ROOT_AS_NOT_FOUND", true)?;
 
     let no_root_templating: bool = envfury::or("NO_ROOT_TEMPLATING", false)?;
+    let config_json_templating: bool = envfury::or("CONFIG_JSON_TEMPLATING", false)?;
 
     let cfg_env_prefix: String = envfury::or_parse("CFG_ENV_PREFIX", "APP_")?;
 
@@ -27,8 +28,11 @@ async fn main() -> color_eyre::eyre::Result<()> {
         root_dir,
         root_as_not_found,
         root_templating: (!no_root_templating).then_some(spa_cfg_html::Engine {
-            env_prefix: std::borrow::Cow::Owned(cfg_env_prefix),
+            env_prefix: std::borrow::Cow::Owned(cfg_env_prefix.clone()),
             template_tag_presence: spa_cfg_html::TemplateTagPresence::Required,
+        }),
+        config_json_templating: config_json_templating.then_some(spa_cfg_json::Engine {
+            env_prefix: std::borrow::Cow::Owned(cfg_env_prefix),
         }),
     };
 

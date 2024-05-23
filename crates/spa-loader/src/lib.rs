@@ -44,8 +44,19 @@ pub enum LoadError {
     DuplicateRoute(PathBuf, String),
 
     /// The templating for a given file/route has failed.
-    #[error("applying the SPA cfg template for file {0:?} (route {1:?}): {2}")]
-    Templating(PathBuf, String, spa_cfg_html::Error),
+    #[error("applying the templating for file {0:?} (route {1:?}): {2}")]
+    Templating(PathBuf, String, TemplatingError),
+}
+/// An error that can occur while templating.
+#[derive(Debug, thiserror::Error)]
+pub enum TemplatingError {
+    /// HTML templating error.
+    #[error("html templating: {0}")]
+    Html(spa_cfg_html::Error),
+
+    /// JSON templating error.
+    #[error("json templating: {0}")]
+    Json(spa_cfg_json::Error),
 }
 
 /// An opinionated SPA code loader.
@@ -73,6 +84,12 @@ pub struct Loader {
     /// The current implementation only does tempating for the root route and only
     /// using the [`spa_cfg_html`] facilities.
     pub root_templating: Option<spa_cfg_html::Engine>,
+
+    /// Templating configuration for the `/config.json` route.
+    ///
+    /// The current implementation only does tempating for the fixed `/config.json` route and only
+    /// using the [`spa_cfg_json`] facilities.
+    pub config_json_templating: Option<spa_cfg_json::Engine>,
 }
 
 impl Loader {
@@ -169,9 +186,25 @@ impl Loader {
                 if route == "/" {
                     if let Some(templating_engine) = &self.root_templating {
                         if let Err(err) = templating_engine.apply(&mut body) {
-                            return Err(LoadError::Templating(dir_entry_path, route.into(), err));
+                            return Err(LoadError::Templating(
+                                dir_entry_path,
+                                route.into(),
+                                TemplatingError::Html(err),
+                            ));
                         };
-                        tracing::info!(message = "Successfully applied templating", %route, ?dir_entry_path);
+                        tracing::info!(message = "Successfully applied HTML templating", %route, ?dir_entry_path);
+                    }
+                }
+                if route == "/config.json" {
+                    if let Some(templating_engine) = &self.config_json_templating {
+                        if let Err(err) = templating_engine.apply(&mut body) {
+                            return Err(LoadError::Templating(
+                                dir_entry_path,
+                                route.into(),
+                                TemplatingError::Json(err),
+                            ));
+                        };
+                        tracing::info!(message = "Successfully applied JSON templating", %route, ?dir_entry_path);
                     }
                 }
 

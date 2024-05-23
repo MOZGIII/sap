@@ -7,6 +7,7 @@ license = "GPL-2.0-only"
 [dependencies]
 mem-server = { path = "../mem-server" }
 spa-cfg-html = { path = "../spa-cfg-html" }
+spa-cfg-json = { path = "../spa-cfg-json" }
 
 bytes = { workspace = true }
 http = { workspace = true }
