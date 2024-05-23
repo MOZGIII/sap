@@ -20,10 +20,18 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let root_as_not_found: bool = envfury::or("ROOT_AS_NOT_FOUND", true)?;
 
+    let no_root_templating: bool = envfury::or("NO_ROOT_TEMPLATING", false)?;
+
+    let cfg_env_prefix: String = envfury::or_parse("CFG_ENV_PREFIX", "APP_")?;
+
     let loader = spa_loader::Loader {
         max_file_size,
         root_dir,
         root_as_not_found,
+        root_templating: (!no_root_templating).then_some(spa_cfg::SpaCfg {
+            env_prefix: std::borrow::Cow::Owned(cfg_env_prefix),
+            template_tag_presence: spa_cfg::TemplateTagPresence::Required,
+        }),
     };
 
     tracing::info!(message = "Loading the files into memory", ?loader);

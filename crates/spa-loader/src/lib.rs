@@ -42,6 +42,10 @@ pub enum LoadError {
     /// The route was a duplicate.
     #[error("adding file {0:?} resulted in the route duplucate {1:?}")]
     DuplicateRoute(PathBuf, String),
+
+    /// The templating for a given file/route has failed.
+    #[error("applying the SPA cfg template for file {0:?} (route {1:?}): {2}")]
+    Templating(PathBuf, String, spa_cfg::Error),
 }
 
 /// An opinionated SPA code loader.
@@ -63,6 +67,12 @@ pub struct Loader {
     ///
     /// Useful for the apps with dynamic routing.
     pub root_as_not_found: bool,
+
+    /// Templating configuration for the root route.
+    ///
+    /// The current implementation only does tempating for the root route and only
+    /// using the [`spa_cfg`] facilities.
+    pub root_templating: Option<spa_cfg::SpaCfg>,
 }
 
 impl Loader {
@@ -146,7 +156,7 @@ impl Loader {
 
                 tracing::debug!(message = "Loading body from the route", %route, ?dir_entry_path);
 
-                let body = match tokio::fs::read(&dir_entry_path).await {
+                let mut body = match tokio::fs::read(&dir_entry_path).await {
                     Ok(data) => data,
                     Err(err) => return Err(LoadError::ReadingBody(dir_entry_path, err)),
                 };
@@ -154,6 +164,15 @@ impl Loader {
                 let file_size: FileSize = body.len().try_into().unwrap();
                 if file_size > self.max_file_size {
                     return Err(LoadError::MaxFileSizeExceeded(dir_entry_path, file_size));
+                }
+
+                if route == "/" {
+                    if let Some(templating_engine) = &self.root_templating {
+                        if let Err(err) = templating_engine.apply(&mut body) {
+                            return Err(LoadError::Templating(dir_entry_path, route.into(), err));
+                        };
+                        tracing::info!(message = "Successfully applied templating", %route, ?dir_entry_path);
+                    }
                 }
 
                 let maybe_content_type = content_type_detector.detect(route);
