@@ -39,9 +39,23 @@ impl Config {
     /// Read and templatify the given input string as JSON using environment values with
     /// the given prefix as configuration values.
     pub fn templatify_from_env(input: &str, env_prefix: &str) -> Result<String, Error> {
-        let mut config: Config = serde_json::from_str(input).map_err(Error::Json)?;
+        let mut config = Self::from_json(input).map_err(Error::Json)?;
         config.substitute_from_env(env_prefix).map_err(Error::Env)?;
-        serde_json::to_string(&config).map_err(Error::Json)
+        config.to_json().map_err(Error::Json)
+    }
+
+    /// Read the config from JSON.
+    ///
+    /// This is a simple wrapper for [`serde_json`] invocation.
+    pub fn from_json(input: &str) -> Result<Self, serde_json::Error> {
+        serde_json::from_str(input)
+    }
+
+    /// Serialize the config to JSON.
+    ///
+    /// This is a simple wrapper for [`serde_json`] invocation.
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(self)
     }
 
     /// Take a configuration and substitute it's values with the value of the corresponding
@@ -69,6 +83,16 @@ impl Config {
         }
 
         Ok(())
+    }
+
+    /// Return an iterator over the config keys.
+    pub fn keys(&self) -> impl Iterator<Item = &str> {
+        self.0.keys().map(|s| s.as_str())
+    }
+
+    /// Return an iterator over the config key/values.
+    pub fn iter(&self) -> impl Iterator<Item = (&str, &str)> {
+        self.0.iter().map(|(k, v)| (k.as_str(), v.as_str()))
     }
 }
 
