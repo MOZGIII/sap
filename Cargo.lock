@@ -867,6 +867,7 @@ dependencies = [
  "tracing-subscriber",
  "xitca-mem-server",
  "xitca-web",
+ "yaml-headers",
 ]
 
 [[package]]
