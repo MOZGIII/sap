@@ -90,6 +90,9 @@ pub struct Loader {
     /// The current implementation only does tempating for the fixed `/config.json` route and only
     /// using the [`spa_cfg_json`] facilities.
     pub config_json_templating: Option<spa_cfg_json::Engine>,
+
+    /// Headers to set for responses.
+    pub headers: http::HeaderMap,
 }
 
 impl Loader {
@@ -213,6 +216,8 @@ impl Loader {
                 tracing::info!(message = "Adding route", %route, %file_size, ?maybe_content_type);
 
                 let mut res = http::Response::new(body.into());
+
+                res.headers_mut().extend(self.headers.clone());
 
                 if let Some(content_type) = maybe_content_type {
                     res.headers_mut()

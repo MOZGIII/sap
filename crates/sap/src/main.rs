@@ -23,6 +23,8 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let cfg_env_prefix: String = envfury::or_parse("CFG_ENV_PREFIX", "APP_")?;
 
+    let global_headers: yaml_headers::Headers = envfury::or_parse("GLOBAL_HEADERS", "")?;
+
     let loader = spa_loader::Loader {
         max_file_size,
         root_dir,
@@ -34,6 +36,7 @@ async fn main() -> color_eyre::eyre::Result<()> {
         config_json_templating: config_json_templating.then_some(spa_cfg_json::Engine {
             env_prefix: std::borrow::Cow::Owned(cfg_env_prefix),
         }),
+        headers: global_headers.into(),
     };
 
     tracing::info!(message = "Loading the files into memory", ?loader);
