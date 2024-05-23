@@ -6,6 +6,7 @@ license = "GPL-2.0-only"
 
 [dependencies]
 spa-cfg-html = { path = "../spa-cfg-html" }
+spa-cfg-json = { path = "../spa-cfg-json" }
 spa-loader = { path = "../spa-loader" }
 xitca-mem-server = { path = "../xitca-mem-server" }
 
