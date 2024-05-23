@@ -983,6 +983,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "spa-cfg-json"
+version = "0.1.0"
+dependencies = [
+ "json-env-cfg",
+]
+
+[[package]]
 name = "spa-loader"
 version = "0.1.0"
 dependencies = [
