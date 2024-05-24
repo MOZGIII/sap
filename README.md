@@ -43,7 +43,7 @@ ENV ROOT_DIR=/app
 
 All the configuration parameters are set via env vars.
 
-See <crates/sap/src/main.rs> to learn about the available settings.
+See [`crates/sap/src/main.rs`](crates/sap/src/main.rs) to learn about the available settings.
 
 ### SPA configuration
 
