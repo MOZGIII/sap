@@ -18,7 +18,8 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let root_as_not_found: bool = envfury::or("ROOT_AS_NOT_FOUND", true)?;
 
-    let no_root_templating: bool = envfury::or("NO_ROOT_TEMPLATING", false)?;
+    let root_templating: RootTemplating =
+        envfury::or_else("ROOT_TEMPLATING", RootTemplating::default)?;
     let config_json_templating: bool = envfury::or("CONFIG_JSON_TEMPLATING", false)?;
 
     let cfg_env_prefix: String = envfury::or_parse("CFG_ENV_PREFIX", "APP_")?;
@@ -29,10 +30,16 @@ async fn main() -> color_eyre::eyre::Result<()> {
         max_file_size,
         root_dir,
         root_as_not_found,
-        root_templating: (!no_root_templating).then_some(spa_cfg_html::Engine {
-            env_prefix: std::borrow::Cow::Owned(cfg_env_prefix.clone()),
-            template_tag_presence: spa_cfg_html::TemplateTagPresence::Required,
-        }),
+        root_templating: (!matches!(root_templating, RootTemplating::Disabled)).then_some(
+            spa_cfg_html::Engine {
+                env_prefix: std::borrow::Cow::Owned(cfg_env_prefix.clone()),
+                template_tag_presence: match root_templating {
+                    RootTemplating::Auto => spa_cfg_html::TemplateTagPresence::SkipIfNotFound,
+                    RootTemplating::Force => spa_cfg_html::TemplateTagPresence::Required,
+                    RootTemplating::Disabled => unreachable!(),
+                },
+            },
+        ),
         config_json_templating: config_json_templating.then_some(spa_cfg_json::Engine {
             env_prefix: std::borrow::Cow::Owned(cfg_env_prefix),
         }),
@@ -68,4 +75,17 @@ enum Mode {
     Run,
     /// Load the SPA and exit.
     Check,
+}
+
+/// The mode of root templating.
+#[derive(Debug, PartialEq, Eq, Default, strum::EnumString)]
+#[strum(serialize_all = "snake_case")]
+enum RootTemplating {
+    /// Templatify if the the script template tag is found.
+    #[default]
+    Auto,
+    /// Require the HTML templating of the root route.
+    Force,
+    /// Do not attempt templatifying.
+    Disabled,
 }
