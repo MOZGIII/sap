@@ -39,5 +39,7 @@ fn check_examples() {
         println!("Status: {status}");
         println!("Stderr:\n{}", String::from_utf8_lossy(&stderr));
         println!("Stdout:\n{}", String::from_utf8_lossy(&stdout));
+
+        assert!(status.success());
     }
 }
