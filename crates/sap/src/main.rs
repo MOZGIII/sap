@@ -24,7 +24,14 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let cfg_env_prefix: String = envfury::or_parse("CFG_ENV_PREFIX", "APP_")?;
 
-    let global_headers: yaml_headers::Headers = envfury::or_parse("GLOBAL_HEADERS", "")?;
+    let mut global_headers: yaml_headers::Headers = envfury::or_parse("GLOBAL_HEADERS", "")?;
+    let global_headers_file: Option<std::path::PathBuf> = envfury::maybe("GLOBAL_HEADERS_FILE")?;
+
+    if let Some(path) = global_headers_file {
+        let data = tokio::fs::read_to_string(path).await?;
+        let parsed: yaml_headers::Headers = data.parse()?;
+        global_headers.0.extend(parsed.0);
+    }
 
     let loader = spa_loader::Loader {
         max_file_size,
