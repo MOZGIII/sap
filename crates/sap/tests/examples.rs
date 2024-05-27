@@ -7,7 +7,7 @@ fn prepare_command(example_dir: impl AsRef<Path>) -> std::process::Command {
 
     command
         .env("MODE", "check")
-        .env("ROOT_DIR", example_dir.as_ref())
+        .env("ROOT_DIR", example_dir.as_ref().join("root"))
         .env("RUST_LOG", "debug");
 
     command
