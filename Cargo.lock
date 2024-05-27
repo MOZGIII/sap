@@ -858,6 +858,7 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "envfury",
+ "serde_yaml",
  "spa-cfg-html",
  "spa-cfg-json",
  "spa-loader",

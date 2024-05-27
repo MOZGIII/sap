@@ -23,4 +23,5 @@ xitca-web = { workspace = true, features = ["http1"] }
 xitca-web = { workspace = true, features = ["http1", "io-uring"] }
 
 [dev-dependencies]
+serde_yaml = { workspace = true }
 tokio = { workspace = true, features = ["process", "io-util", "time"] }

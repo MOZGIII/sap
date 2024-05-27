@@ -4,16 +4,36 @@ use tokio::io::{AsyncBufReadExt as _, AsyncReadExt as _};
 
 const EXECUTABLE_PATH: &str = env!("CARGO_BIN_EXE_sap");
 
-fn prepare_sap_command(
+async fn read_envs(path: impl AsRef<Path>) -> Vec<(String, String)> {
+    let result = tokio::fs::read_to_string(path).await;
+
+    let data = match result {
+        Ok(v) => v,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
+            return Vec::new();
+        }
+        Err(err) => panic!("{:?}", err),
+    };
+
+    let parsed: std::collections::HashMap<String, String> = serde_yaml::from_str(&data).unwrap();
+    parsed.into_iter().collect()
+}
+
+async fn prepare_sap_command(
     example_dir: impl AsRef<Path>,
     mode: &'static str,
 ) -> tokio::process::Command {
+    let example_dir_path = example_dir.as_ref();
+
+    let envs = read_envs(example_dir_path.join("env.yaml")).await;
+
     let mut command = tokio::process::Command::new(EXECUTABLE_PATH);
 
     command
         .env("MODE", mode)
-        .env("ROOT_DIR", example_dir.as_ref().join("root"))
-        .env("RUST_LOG", "debug");
+        .env("ROOT_DIR", example_dir_path.join("root"))
+        .env("RUST_LOG", "debug")
+        .envs(envs);
 
     command
 }
@@ -26,7 +46,7 @@ async fn check_examples() {
         let example = example.unwrap();
 
         let example_path = example.path();
-        let mut command = prepare_sap_command(&example_path, "check");
+        let mut command = prepare_sap_command(&example_path, "check").await;
 
         command.stderr(std::process::Stdio::piped());
         command.stdout(std::process::Stdio::piped());
@@ -60,7 +80,7 @@ async fn test_examples_with_hurl() {
         let example = example.unwrap();
 
         let example_path = example.path();
-        let mut command = prepare_sap_command(&example_path, "run");
+        let mut command = prepare_sap_command(&example_path, "run").await;
 
         command.stderr(std::process::Stdio::piped());
         command.stdout(std::process::Stdio::piped());
