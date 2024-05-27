@@ -38,14 +38,16 @@ pub struct Detector {
 impl Detector {
     /// Detect content type based on the route.
     pub fn detect(&mut self, route: &str) -> Option<HeaderValue> {
-        if let Some(guess) = Mime::guess(route).next() {
-            let val = self.cache.find_or_cache(guess);
-            return Some(HeaderValue::from_maybe_shared(val).unwrap());
-        }
-
-        // Assume routes that don't have a `.` in them are pages.
-        if !route.contains(".") {
-            return Some(HeaderValue::from_static("text/html; charset=utf-8"));
+        match route.rsplit_once(".") {
+            // The route has a `.`, so we can extract the extension.
+            Some((_, ext)) => {
+                if let Some(guess) = Mime::guess(ext).next() {
+                    let val = self.cache.find_or_cache(guess);
+                    return Some(HeaderValue::from_maybe_shared(val).unwrap());
+                }
+            }
+            // Assume routes that don't have a `.` in them are pages.
+            None => return Some(HeaderValue::from_static("text/html; charset=utf-8")),
         }
 
         None
