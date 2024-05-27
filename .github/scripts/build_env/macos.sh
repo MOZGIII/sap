@@ -2,7 +2,8 @@
 set -euo pipefail
 
 brew install \
-  coreutils
+  coreutils \
+  hurl
 
 .github/scripts/zig.sh
 .github/scripts/cargo-zigbuild.sh
