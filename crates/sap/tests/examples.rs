@@ -2,8 +2,8 @@ use std::path::Path;
 
 const EXECUTABLE_PATH: &str = env!("CARGO_BIN_EXE_sap");
 
-fn prepare_command(example_dir: impl AsRef<Path>) -> std::process::Command {
-    let mut command = std::process::Command::new(EXECUTABLE_PATH);
+fn prepare_command(example_dir: impl AsRef<Path>) -> tokio::process::Command {
+    let mut command = tokio::process::Command::new(EXECUTABLE_PATH);
 
     command
         .env("MODE", "check")
@@ -13,8 +13,8 @@ fn prepare_command(example_dir: impl AsRef<Path>) -> std::process::Command {
     command
 }
 
-#[test]
-fn check_examples() {
+#[tokio::test]
+async fn check_examples() {
     let examples = std::fs::read_dir("../../examples").unwrap();
 
     for example in examples {
@@ -25,6 +25,7 @@ fn check_examples() {
 
         command.stderr(std::process::Stdio::piped());
         command.stdout(std::process::Stdio::piped());
+        command.kill_on_drop(true);
 
         println!("Example: {example_path:?}");
 
@@ -34,7 +35,7 @@ fn check_examples() {
             status,
             stdout,
             stderr,
-        } = child.wait_with_output().unwrap();
+        } = child.wait_with_output().await.unwrap();
 
         println!("Status: {status}");
         println!("Stderr:\n{}", String::from_utf8_lossy(&stderr));
