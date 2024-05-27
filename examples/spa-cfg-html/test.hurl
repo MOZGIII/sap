@@ -4,7 +4,7 @@ Content-Type: text/html; charset=utf-8
 [Captures]
 root_body: body
 [Asserts]
-xpath "string(//script[@type=\"application/spa-cfg\"])" contains "{\"myKey\":\"value1\"}"
+xpath "string(//script[@type=\"application/spa-cfg\"])" contains "{\"myKey\":\"value2\"}"
 
 GET http://localhost:8080/
 HTTP 200
