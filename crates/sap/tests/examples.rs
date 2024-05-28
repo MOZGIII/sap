@@ -30,6 +30,7 @@ async fn prepare_sap_command(
     let mut command = tokio::process::Command::new(EXECUTABLE_PATH);
 
     command
+        .current_dir(example_dir_path)
         .env("MODE", mode)
         .env("ROOT_DIR", example_dir_path.join("root"))
         .env("RUST_LOG", "debug")
