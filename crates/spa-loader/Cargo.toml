@@ -5,6 +5,7 @@ edition = "2021"
 license = "GPL-2.0-only"
 
 [dependencies]
+bytes-cache = { path = "../bytes-cache" }
 mem-server = { path = "../mem-server" }
 spa-cfg-html = { path = "../spa-cfg-html" }
 spa-cfg-json = { path = "../spa-cfg-json" }
