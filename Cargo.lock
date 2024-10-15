@@ -115,9 +115,10 @@ dependencies = [
 name = "content-type"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "bytes-cache",
+ "file-format",
  "http",
- "mr-mime",
 ]
 
 [[package]]
@@ -214,6 +215,12 @@ dependencies = [
  "indenter",
  "once_cell",
 ]
+
+[[package]]
+name = "file-format"
+version = "0.25.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ffe3a660c3a1b10e96f304a9413d673b2118d62e4520f7ddf4a4faccfe8b9b9"
 
 [[package]]
 name = "fnv"
@@ -405,15 +412,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b248f5224d1d606005e02c97f5aa4e88eeb230488bcc03bc9ca4d7991399f2b5"
 
 [[package]]
-name = "intern-str"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea1096b3b10801e41fec98063d46095dc9446e226a5b86545c4e805a226eed9e"
-dependencies = [
- "autocfg",
-]
-
-[[package]]
 name = "io-uring"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -546,16 +544,6 @@ dependencies = [
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys",
-]
-
-[[package]]
-name = "mr-mime"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c694549649fc0a52a8c360087b2f6c13192e35b04e02fa5d5515ce961b045e9d"
-dependencies = [
- "intern-str",
- "memchr",
 ]
 
 [[package]]

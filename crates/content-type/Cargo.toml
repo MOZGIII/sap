@@ -7,5 +7,6 @@ license = "GPL-2.0-only"
 [dependencies]
 bytes-cache = { path = "../bytes-cache" }
 
+bytes = { workspace = true }
+file-format = { workspace = true }
 http = { workspace = true }
-mr-mime = { workspace = true }

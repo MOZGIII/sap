@@ -13,19 +13,10 @@ pub struct Detector {
 
 impl Detector {
     /// Detect content type based on the route.
-    pub fn detect(&mut self, route: &str, _file_data: &[u8]) -> Option<HeaderValue> {
-        match route.rsplit_once(".") {
-            // The route has a `.`, so we can extract the extension.
-            Some((_, ext)) => {
-                if let Some(guess) = mr_mime::Mime::guess(ext).next() {
-                    let val = self.cache.find_or_cache(guess.to_string().into()).clone();
-                    return Some(HeaderValue::from_maybe_shared(val).unwrap());
-                }
-            }
-            // Assume routes that don't have a `.` in them are pages.
-            None => return Some(HeaderValue::from_static("text/html; charset=utf-8")),
-        }
-
-        None
+    pub fn detect(&mut self, _route: &str, file_data: &[u8]) -> Option<HeaderValue> {
+        let detected_format = file_format::FileFormat::from_bytes(file_data);
+        let bytes = bytes::Bytes::copy_from_slice(detected_format.media_type().as_bytes());
+        let header_value = self.cache.find_or_cache(bytes).clone();
+        Some(HeaderValue::from_maybe_shared(header_value).unwrap())
     }
 }
