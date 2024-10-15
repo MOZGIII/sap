@@ -6,4 +6,3 @@ license = "GPL-2.0-only"
 
 [dependencies]
 bytes = { workspace = true }
-http = { workspace = true }

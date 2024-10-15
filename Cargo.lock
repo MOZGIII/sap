@@ -67,7 +67,6 @@ name = "bytes-cache"
 version = "0.1.0"
 dependencies = [
  "bytes",
- "http",
 ]
 
 [[package]]
