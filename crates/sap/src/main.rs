@@ -63,12 +63,11 @@ async fn main() -> color_eyre::eyre::Result<()> {
 
     let service = xitca_mem_server::Service(Arc::new(service));
 
-    tracing::info!(message = "About to start the server", %addr);
+    let server = xitca_web::HttpServer::serve(service).bind(addr)?;
 
-    xitca_web::HttpServer::serve(service)
-        .bind(addr)?
-        .run()
-        .await?;
+    tracing::info!(message = "Server is ready", %addr);
+
+    server.run().await?;
 
     Ok(())
 }
