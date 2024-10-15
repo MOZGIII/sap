@@ -13,7 +13,7 @@ pub struct Detector {
 
 impl Detector {
     /// Detect content type based on the route.
-    pub fn detect(&mut self, route: &str) -> Option<HeaderValue> {
+    pub fn detect(&mut self, route: &str, _file_data: &[u8]) -> Option<HeaderValue> {
         match route.rsplit_once(".") {
             // The route has a `.`, so we can extract the extension.
             Some((_, ext)) => {

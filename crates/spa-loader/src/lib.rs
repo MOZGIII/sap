@@ -211,7 +211,7 @@ impl Loader {
                     }
                 }
 
-                let maybe_content_type = content_type_detector.detect(route);
+                let maybe_content_type = content_type_detector.detect(route, body.as_slice());
 
                 tracing::info!(message = "Adding route", %route, %file_size, ?maybe_content_type);
 
