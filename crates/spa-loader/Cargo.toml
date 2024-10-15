@@ -5,14 +5,12 @@ edition = "2021"
 license = "GPL-2.0-only"
 
 [dependencies]
-bytes-cache = { path = "../bytes-cache" }
+content-type = { path = "../content-type" }
 mem-server = { path = "../mem-server" }
 spa-cfg-html = { path = "../spa-cfg-html" }
 spa-cfg-json = { path = "../spa-cfg-json" }
 
-bytes = { workspace = true }
 http = { workspace = true }
-mr-mime = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["fs"] }
 tracing = { workspace = true }

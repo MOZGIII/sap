@@ -1,0 +1,11 @@
+[package]
+name = "content-type"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-2.0-only"
+
+[dependencies]
+bytes-cache = { path = "../bytes-cache" }
+
+http = { workspace = true }
+mr-mime = { workspace = true }

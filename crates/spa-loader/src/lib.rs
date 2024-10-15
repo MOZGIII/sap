@@ -1,6 +1,5 @@
 //! An opinionated SPA (Single Page App) loader.
 
-pub mod content_type;
 pub mod route_from_file_path;
 
 use std::path::PathBuf;

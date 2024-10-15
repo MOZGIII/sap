@@ -112,6 +112,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "content-type"
+version = "0.1.0"
+dependencies = [
+ "bytes-cache",
+ "http",
+ "mr-mime",
+]
+
+[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1071,11 +1080,9 @@ dependencies = [
 name = "spa-loader"
 version = "0.1.0"
 dependencies = [
- "bytes",
- "bytes-cache",
+ "content-type",
  "http",
  "mem-server",
- "mr-mime",
  "spa-cfg-html",
  "spa-cfg-json",
  "thiserror",
