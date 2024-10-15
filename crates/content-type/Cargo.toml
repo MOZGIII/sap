@@ -8,5 +8,6 @@ license = "GPL-2.0-only"
 bytes-cache = { path = "../bytes-cache" }
 
 bytes = { workspace = true }
-file-format = { workspace = true }
+file-format = { workspace = true, features = ["reader"] }
 http = { workspace = true }
+mr-mime = { workspace = true }
