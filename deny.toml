@@ -1,8 +1,7 @@
 [licenses]
-allow = ["GPL-2.0", "MPL-2.0"]
-copyleft = "warn"
-allow-osi-fsf-free = "both"
+allow = ["GPL-2.0", "MPL-2.0", "MIT", "Apache-2.0"]
 
 [[licenses.exceptions]]
 name = "unicode-ident"
-allow = ["Unicode-DFS-2016"]
+version = "*"
+allow = ["Unicode-3.0"]
