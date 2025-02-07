@@ -1,5 +1,5 @@
 export type RunnerOS =
-  | "ubuntu-22.04"
+  | "ubuntu-24.04"
   | "windows-latest"
   | "macos-14"
   | "macos-14-large";
@@ -24,13 +24,13 @@ const buildEnvScriptPath = (script: string) =>
 // All the platforms that we support, and their respective settings.
 export const all = {
   ubuntu2204: {
-    name: "Ubuntu 22.04",
-    os: "ubuntu-22.04",
+    name: "Ubuntu 24.04",
+    os: "ubuntu-24.04",
     buildEnvScript: buildEnvScriptPath("ubuntu.sh"),
     essential: true,
     env: {},
-    cacheKey: "ubuntu2204-amd64",
-    artifactMarker: "ubuntu2204",
+    cacheKey: "ubuntu2404-amd64",
+    artifactMarker: "ubuntu2404",
     isBroken: false,
   },
   windows: {

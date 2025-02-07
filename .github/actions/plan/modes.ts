@@ -12,19 +12,19 @@ export const code = {
   clippy: {
     name: "clippy",
     cargoCommand: "clippy",
-    cargoArgs: "--workspace --all-targets -- -D warnings",
+    cargoArgs: "--locked --workspace --all-targets -- -D warnings",
     cargoCacheKey: "clippy",
   },
   test: {
     name: "test",
     cargoCommand: "test",
-    cargoArgs: "--workspace",
+    cargoArgs: "--locked --workspace",
     cargoCacheKey: "test",
   },
   build: {
     name: "build",
     cargoCommand: "build",
-    cargoArgs: "--workspace",
+    cargoArgs: "--locked --workspace",
     cargoCacheKey: "build",
   },
   fmt: {
@@ -37,7 +37,7 @@ export const code = {
   docs: {
     name: "doc",
     cargoCommand: "doc",
-    cargoArgs: "--workspace --document-private-items",
+    cargoArgs: "--locked --workspace --document-private-items",
     platformIndependent: true,
     cargoCacheKey: "doc",
   },
@@ -47,7 +47,7 @@ export const build = {
   build: {
     name: "build",
     cargoCommand: "build",
-    cargoArgs: "--workspace --release",
+    cargoArgs: "--locked --workspace --release",
     cargoCacheKey: "release-build",
   },
 } satisfies Modes;
