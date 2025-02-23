@@ -20,6 +20,10 @@ pub struct Processor<ContentProcessor> {
 #[derive(Debug, thiserror::Error)]
 pub enum TemplatingError<ContentProcessorError> {
     /// The template script was not found.
+    #[error("HTML parsing failed")]
+    HtmlParsing(Vec<Cow<'static, str>>),
+
+    /// The template script was not found.
     #[error("template script not found in the HTML")]
     TemplateNotFound,
 
@@ -74,11 +78,33 @@ impl<ContentProcessor: self::ContentProcessor> Processor<ContentProcessor> {
         &self,
         html: &[u8],
     ) -> Result<Vec<u8>, TemplatingError<<ContentProcessor as self::ContentProcessor>::Error>> {
-        let mut doc = parse(html);
-        self.apply(&mut doc)?;
+        let rcdom::RcDom {
+            mut document,
+            errors,
+            ..
+        } = parse(html);
+
+        let errors = errors.into_inner();
+        if !errors.is_empty() {
+            return Err(TemplatingError::HtmlParsing(errors));
+        }
+
+        self.apply(&mut document)?;
 
         let mut output = Vec::with_capacity(html.len());
-        doc.serialize(&mut output).unwrap(); // vec write never fails
+
+        let serializable_document: rcdom::SerializableHandle = document.into();
+
+        html5ever::serialize::serialize(
+            &mut output,
+            &serializable_document,
+            html5ever::serialize::SerializeOpts {
+                scripting_enabled: true,
+                traversal_scope: html5ever::serialize::TraversalScope::IncludeNode,
+                create_missing_parent: false,
+            },
+        )
+        .unwrap(); // vec write never fails
 
         Ok(output)
     }
@@ -86,7 +112,7 @@ impl<ContentProcessor: self::ContentProcessor> Processor<ContentProcessor> {
     /// Apply the template processing.
     fn apply(
         &self,
-        doc: &mut rcdom::RcDom,
+        doc: &mut std::rc::Rc<rcdom::Node>,
     ) -> Result<(), TemplatingError<<ContentProcessor as self::ContentProcessor>::Error>> {
         let selector = format!(
             r#"script[type="{}"]"#,
