@@ -1,5 +1,6 @@
 //! The HTML templating logic.
 
+use markup5ever_rcdom as rcdom;
 use std::borrow::Cow;
 
 /// The HTML teplating processor.
@@ -60,10 +61,10 @@ where
 }
 
 /// Parse the raw document bytes into a useful form.
-fn parse(html: &[u8]) -> kuchikiki::NodeRef {
-    let parser = kuchikiki::parse_html();
+fn parse(html: &[u8]) -> rcdom::RcDom {
+    let parser = html5ever::parse_document(rcdom::RcDom::default(), Default::default());
 
-    use kuchikiki::traits::TendrilSink as _;
+    use html5ever::tendril::TendrilSink as _;
     parser.from_utf8().one(html)
 }
 
@@ -85,7 +86,7 @@ impl<ContentProcessor: self::ContentProcessor> Processor<ContentProcessor> {
     /// Apply the template processing.
     fn apply(
         &self,
-        doc: &mut kuchikiki::NodeRef,
+        doc: &mut rcdom::RcDom,
     ) -> Result<(), TemplatingError<<ContentProcessor as self::ContentProcessor>::Error>> {
         let selector = format!(
             r#"script[type="{}"]"#,
