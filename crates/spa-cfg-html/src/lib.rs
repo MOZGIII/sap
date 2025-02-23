@@ -45,7 +45,9 @@ impl Engine {
     /// Apply the SPA configuration to the given HTML document contents.
     pub fn apply(&self, body: &mut Vec<u8>) -> Result<(), Error> {
         let html_templating_processor = html_templating::Processor {
-            script_type: Cow::Borrowed("application/spa-cfg"),
+            template_element_filter: html_templating::template_element_filter::ScriptTag {
+                script_type: Cow::Borrowed("application/spa-cfg"),
+            },
             content_processor: ContentProcessor(self),
         };
 

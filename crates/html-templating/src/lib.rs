@@ -1,15 +1,23 @@
 //! The HTML templating logic.
 
+#![allow(missing_docs, clippy::missing_docs_in_private_items)]
+
+mod dom;
+
+use html5ever::tendril::TendrilSink as _;
+use markup5ever_rcdom as rcdom;
 use std::borrow::Cow;
+
+pub use dom::{template_element_filter, TemplateElementFilter};
 
 /// The HTML teplating processor.
 ///
 /// Will process the HTML code, and replace content of first the `script` node with the specified
 /// type it encounters via the specified content processor.
 #[derive(Debug)]
-pub struct Processor<ContentProcessor> {
-    /// The script type to work with.
-    pub script_type: Cow<'static, str>,
+pub struct Processor<TemplateElementFilter, ContentProcessor> {
+    /// The element filter to select the template to work with.
+    pub template_element_filter: TemplateElementFilter,
 
     /// The logic to apply for script tag content processing.
     pub content_processor: ContentProcessor,
@@ -18,21 +26,22 @@ pub struct Processor<ContentProcessor> {
 /// The template application error.
 #[derive(Debug, thiserror::Error)]
 pub enum TemplatingError<ContentProcessorError> {
+    /// The HTML parsing has failed.
+    #[error("HTML parsing failed")]
+    HtmlParsing(Vec<Cow<'static, str>>),
+
     /// The template script was not found.
     #[error("template script not found in the HTML")]
     TemplateNotFound,
 
-    /// The template script does not have content.
-    #[error("template script does not have content")]
-    NoContent,
+    #[error("template script content not found")]
+    TemplateContentNotFound,
 
-    /// The template script content is not a text node.
-    #[error("template script content is not a text node")]
-    UnexpectedContent,
+    #[error("template element has more than one child")]
+    TemplateElementHasMoreThanOneChild,
 
-    /// Template content processor failed.
-    #[error("template script content is not a text node")]
-    ContentProcessor(ContentProcessorError),
+    #[error("template application: {0}")]
+    TemplateApplication(TemplateApplicationError<ContentProcessorError>),
 }
 
 /// An abstract content processor.
@@ -43,10 +52,6 @@ pub trait ContentProcessor {
     /// Process the provided content and get replacement content.
     fn process(&self, input: &str) -> Result<String, Self::Error>;
 }
-
-// pub fn noop(input: &str) -> String {
-//     input.into()
-// }
 
 impl<T, E> ContentProcessor for T
 where
@@ -59,60 +64,110 @@ where
     }
 }
 
-/// Parse the raw document bytes into a useful form.
-fn parse(html: &[u8]) -> kuchikiki::NodeRef {
-    let parser = kuchikiki::parse_html();
+impl ContentProcessor for () {
+    type Error = std::convert::Infallible;
 
-    use kuchikiki::traits::TendrilSink as _;
-    parser.from_utf8().one(html)
+    fn process(&self, input: &str) -> Result<String, Self::Error> {
+        Ok(input.into())
+    }
 }
 
-impl<ContentProcessor: self::ContentProcessor> Processor<ContentProcessor> {
+#[derive(Debug, thiserror::Error)]
+pub enum TemplateApplicationError<ContentProcessorError> {
+    #[error("no text content")]
+    TemplateNonTextContent,
+
+    #[error("content processor error: {0}")]
+    ContentProcessor(ContentProcessorError),
+}
+
+fn apply_template<ContentProcessor: self::ContentProcessor>(
+    handle: &dom::Handle,
+    content_processor: &ContentProcessor,
+) -> Result<(), TemplateApplicationError<ContentProcessor::Error>> {
+    let markup5ever_rcdom::NodeData::Text { ref contents } = handle.data else {
+        return Err(TemplateApplicationError::TemplateNonTextContent);
+    };
+
+    let mut contents = contents.borrow_mut();
+
+    let new_contents = content_processor
+        .process(&contents)
+        .map_err(TemplateApplicationError::ContentProcessor)?;
+
+    *contents = new_contents.into();
+
+    Ok(())
+}
+
+impl<TemplateElementFilter, ContentProcessor> Processor<TemplateElementFilter, ContentProcessor>
+where
+    TemplateElementFilter: self::dom::TemplateElementFilter,
+    ContentProcessor: self::ContentProcessor,
+{
     /// Process the HTML template.
     pub fn process(
         &self,
         html: &[u8],
     ) -> Result<Vec<u8>, TemplatingError<<ContentProcessor as self::ContentProcessor>::Error>> {
-        let mut doc = parse(html);
-        self.apply(&mut doc)?;
-
-        let mut output = Vec::with_capacity(html.len());
-        doc.serialize(&mut output).unwrap(); // vec write never fails
-
-        Ok(output)
-    }
-
-    /// Apply the template processing.
-    fn apply(
-        &self,
-        doc: &mut kuchikiki::NodeRef,
-    ) -> Result<(), TemplatingError<<ContentProcessor as self::ContentProcessor>::Error>> {
-        let selector = format!(
-            r#"script[type="{}"]"#,
-            self.script_type.replace(r#"""#, r#"\""#)
+        let parser = html5ever::parse_document(
+            dom::TemplateNodeLookup::new(&self.template_element_filter),
+            Default::default(),
         );
 
-        let el_data = doc
-            .select_first(&selector)
-            .map_err(|_| TemplatingError::TemplateNotFound)?;
+        let dom = parser.from_utf8().one(html);
 
-        let el_node = el_data.as_node();
+        let dom::TemplateNodeLookup {
+            rcdom,
+            template_element,
+            ..
+        } = dom;
 
-        let child = el_node.first_child().ok_or(TemplatingError::NoContent)?;
+        let rcdom::RcDom {
+            document, errors, ..
+        } = rcdom;
 
-        let child_content = child
-            .into_text_ref()
-            .ok_or(TemplatingError::UnexpectedContent)?;
+        let errors = errors.into_inner();
+        if !errors.is_empty() {
+            tracing::warn!(message = "parsing errors", ?errors);
+        }
 
-        let mut child_content_value = child_content.borrow_mut();
+        let template_element = template_element.into_inner();
 
-        let new_content = self
-            .content_processor
-            .process(&child_content_value)
-            .map_err(TemplatingError::ContentProcessor)?;
+        let Some(template_element) = template_element else {
+            return Err(TemplatingError::TemplateNotFound);
+        };
 
-        *child_content_value = new_content;
+        let children = template_element.children.borrow();
+        if children.len() > 1 {
+            return Err(TemplatingError::TemplateElementHasMoreThanOneChild);
+        }
 
-        Ok(())
+        let Some(child) = children.first() else {
+            return Err(TemplatingError::TemplateContentNotFound);
+        };
+
+        let child = std::rc::Rc::clone(child);
+        drop(children);
+
+        apply_template(&child, &self.content_processor)
+            .map_err(TemplatingError::TemplateApplication)?;
+
+        let mut output = Vec::with_capacity(html.len());
+
+        let serializable_document: rcdom::SerializableHandle = document.into();
+
+        html5ever::serialize::serialize(
+            &mut output,
+            &serializable_document,
+            html5ever::serialize::SerializeOpts {
+                scripting_enabled: true,
+                traversal_scope: html5ever::serialize::TraversalScope::ChildrenOnly(None),
+                create_missing_parent: false,
+            },
+        )
+        .unwrap(); // vec write never fails
+
+        Ok(output)
     }
 }
