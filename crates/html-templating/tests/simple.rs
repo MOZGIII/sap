@@ -43,7 +43,9 @@ fn happy_path() {
     };
 
     let processor = html_templating::Processor {
-        script_type: Cow::Borrowed("application/spa-cfg"),
+        template_element_filter: html_templating::template_element_filter::ScriptTag {
+            script_type: Cow::Borrowed("application/spa-cfg"),
+        },
         content_processor: happy_path_content_processor,
     };
 
