@@ -1,3 +1,5 @@
+//! Test the examples.
+
 use std::path::Path;
 
 use tokio::io::{AsyncBufReadExt as _, AsyncReadExt as _};
