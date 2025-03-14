@@ -66,7 +66,8 @@ impl<TemplateElementFilter: self::TemplateElementFilter> TreeSink
 
     type Output = Self;
 
-    type ElemName<'a> = <markup5ever_rcdom::RcDom as TreeSink>::ElemName<'a>
+    type ElemName<'a>
+        = <markup5ever_rcdom::RcDom as TreeSink>::ElemName<'a>
     where
         TemplateElementFilter: 'a;
 
