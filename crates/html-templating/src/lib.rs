@@ -1,4 +1,4 @@
-#![doc = "The HTML templating logic."]
+//! The HTML templating logic.
 
 mod dom;
 
