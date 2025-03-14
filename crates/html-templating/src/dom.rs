@@ -1,14 +1,21 @@
 use html5ever::interface::TreeSink;
 
+/// The handle type for the DOM nodes.
 pub type Handle = <markup5ever_rcdom::RcDom as TreeSink>::Handle;
 
+/// A struct representing the template node lookup.
 pub struct TemplateNodeLookup<TemplateElementFilter> {
+    /// The RcDom instance.
     pub rcdom: markup5ever_rcdom::RcDom,
+    /// The filter to select the template element.
     pub template_element_filter: TemplateElementFilter,
+    /// The template element handle.
     pub template_element: std::cell::RefCell<Option<Handle>>,
 }
 
+/// A trait for filtering template elements.
 pub trait TemplateElementFilter {
+    /// Check if the element is selected.
     fn is_selected(
         &self,
         name: &html5ever::QualName,
@@ -28,8 +35,11 @@ impl<T: TemplateElementFilter> TemplateElementFilter for &T {
     }
 }
 
+/// Module containing template element filters.
 pub mod template_element_filter {
+    /// A filter for script tags with a specific type.
     pub struct ScriptTag {
+        /// The script type to filter.
         pub script_type: std::borrow::Cow<'static, str>,
     }
 
@@ -50,6 +60,7 @@ pub mod template_element_filter {
 }
 
 impl<TemplateElementFilter> TemplateNodeLookup<TemplateElementFilter> {
+    /// Create a new TemplateNodeLookup instance.
     pub fn new(template_element_filter: TemplateElementFilter) -> Self {
         Self {
             rcdom: Default::default(),

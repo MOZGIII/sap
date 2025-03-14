@@ -1,6 +1,4 @@
-//! The HTML templating logic.
-
-#![allow(missing_docs, clippy::missing_docs_in_private_items)]
+#![doc = "The HTML templating logic."]
 
 mod dom;
 
@@ -10,7 +8,7 @@ use std::borrow::Cow;
 
 pub use dom::{template_element_filter, TemplateElementFilter};
 
-/// The HTML teplating processor.
+/// The HTML templating processor.
 ///
 /// Will process the HTML code, and replace content of first the `script` node with the specified
 /// type it encounters via the specified content processor.
