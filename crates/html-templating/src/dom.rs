@@ -15,7 +15,7 @@ pub struct TemplateNodeLookup<TemplateElementFilter> {
 
 /// A trait for filtering template elements.
 pub trait TemplateElementFilter {
-    /// Check if the element is selected.
+    /// Check if the element is selected by this filter.
     fn is_selected(
         &self,
         name: &html5ever::QualName,
@@ -37,9 +37,9 @@ impl<T: TemplateElementFilter> TemplateElementFilter for &T {
 
 /// Module containing template element filters.
 pub mod template_element_filter {
-    /// A filter for script tags with a specific type.
+    /// A filter for `script` tags with a specific `type` attribute.
     pub struct ScriptTag {
-        /// The script type to filter.
+        /// The script `type` to select.
         pub script_type: std::borrow::Cow<'static, str>,
     }
 
@@ -60,7 +60,7 @@ pub mod template_element_filter {
 }
 
 impl<TemplateElementFilter> TemplateNodeLookup<TemplateElementFilter> {
-    /// Create a new TemplateNodeLookup instance.
+    /// Create a new [`TemplateNodeLookup`] instance.
     pub fn new(template_element_filter: TemplateElementFilter) -> Self {
         Self {
             rcdom: Default::default(),
